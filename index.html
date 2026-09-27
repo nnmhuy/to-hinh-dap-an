@@ -1,0 +1,1256 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tô Hình Đáp Án</title>
+<style>
+  :root {
+    --bg: #f3f4f7; --panel: #fff; --line: #e3e6ec; --line-strong: #cfd4dc; --text: #1a1d23; --muted: #667085;
+    --accent: #2f5bea; --accent-weak: #eaf0ff; --accent-ink: #1d3fb8; --danger: #d92d20; --danger-weak: #fdecea;
+    --ok: #12805c; --radius: 12px; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+    --fs: 0.7; --edge: #8a8a8a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  button, input, select { font: inherit; color: inherit; }
+
+  /* ---------- controls ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 12px;
+         border: 1px solid var(--line-strong); background: var(--panel); border-radius: 8px; cursor: pointer; white-space: nowrap; }
+  .btn:hover { background: #f7f8fa; }
+  .btn:focus-visible, .seg button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .btn.primary:hover { background: var(--accent-ink); }
+  .btn.ghost { border-color: transparent; background: transparent; }
+  .btn.ghost:hover { background: #eef0f4; }
+  .btn.danger { color: var(--danger); }
+  .btn.block { width: 100%; }
+  .btn.icon { width: 34px; padding: 0; }
+  .btn svg { width: 16px; height: 16px; }
+  .seg { display: inline-flex; background: #eceef2; border-radius: 9px; padding: 3px; gap: 2px; }
+  .seg button { border: 0; background: transparent; height: 28px; padding: 0 12px; border-radius: 7px; cursor: pointer; white-space: nowrap; color: var(--muted); }
+  .seg button.on { background: var(--panel); color: var(--text); box-shadow: var(--shadow); font-weight: 600; }
+  .seg.full { display: flex; } .seg.full button { flex: 1; }
+  input[type=number], input[type=text], select { height: 34px; border: 1px solid var(--line-strong); border-radius: 8px; padding: 0 10px; background: var(--panel); }
+  input[type=number] { width: 80px; }
+  input[type=range] { accent-color: var(--accent); width: 100%; }
+  label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+  .hint { font-size: 12px; color: var(--muted); margin: 0; }
+  .warn { color: var(--danger); }
+  .kbd { font: 11px ui-monospace, monospace; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; color: var(--muted); }
+
+  /* ---------- layout ---------- */
+  .appbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 16px;
+            background: var(--panel); border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; }
+  .brand .logo { width: 26px; height: 26px; border-radius: 7px; background: var(--text);
+                 background-image: linear-gradient(90deg, transparent 50%, #fff 50%), linear-gradient(transparent 50%, #fff 50%);
+                 background-size: 13px 13px; background-blend-mode: difference; }
+  .spacer { flex: 1; }
+  .layout { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 56px); }
+  .side { overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; border-right: 1px solid var(--line); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow);
+          display: flex; flex-direction: column; gap: 10px; }
+  .guide { background: #f5f8ff; border-color: #cddcff; }
+  [hidden] { display: none !important; } /* .card's display:flex would otherwise beat the hidden attribute */
+  .guide ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+  .guide a:not(.btn) { color: var(--accent-ink); }
+  .guide a.btn { text-decoration: none; }
+  #guideBtn.on { background: var(--accent-weak); border-color: #b9ccff; color: var(--accent-ink); }
+  .card h3 { margin: 0; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  .step { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-weak); color: var(--accent-ink); font-size: 11px;
+          display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 12px; padding: 2px 8px; border-radius: 99px; background: #f0f2f5; color: #344054; }
+  .chip.dark { background: #1a1d23; color: #fff; }
+  .ansStrip { display: flex; flex-wrap: wrap; gap: 3px; }
+  .ansStrip span { font: 600 11px ui-monospace, monospace; width: 26px; text-align: center; padding: 2px 0; border-radius: 5px; background: #f0f2f5; }
+  .ansStrip span b { color: var(--muted); font-weight: 400; font-size: 9px; display: block; line-height: 1; }
+
+  .stage { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  .toolbar .sep { width: 1px; height: 22px; background: var(--line); }
+  .toolbar #txt { width: 170px; min-width: 0; flex: 0 1 170px; }
+  .zoom { display: flex; gap: 2px; margin-left: auto; }
+  #zoomVal { min-width: 44px; text-align: center; font-size: 12px; color: var(--muted); }
+  #wrap { flex: 1; overflow: auto; padding: 16px; display: flex; }
+  #grid { position: relative; display: grid; width: max-content; margin: auto; background: #fff; user-select: none; box-shadow: var(--shadow); }
+  body.painting #grid { cursor: crosshair; }
+  body.pv .edit-only { display: none !important; }
+
+  /* ---------- grid cells ---------- */
+  .c { border: 1px solid #eee; overflow: hidden; display: flex; align-items: center; justify-content: center;
+       font-size: calc(var(--cw) * var(--fs)); font-weight: 600; line-height: 1.05; white-space: pre; text-align: center; }
+  .c.b { background: #111; border-color: #333; color: #fff; }
+  .c.sel { box-shadow: inset 0 0 0 100px rgba(255, 196, 0, .55); }
+  /* Preview: a plain table — every cell gets the same thin border, no fill, no region outlines.
+     !important beats the per-side region colours set inline in edit mode. */
+  body.pv .c, body.pv .c.b { background: #fff; color: #111; box-shadow: none; }
+  body.pv:not(.region) .c { border-width: 0 1px 1px 0 !important; border-color: #000 !important; }
+  body.pv:not(.region) #grid { border-top: 1px solid #000; border-left: 1px solid #000; }
+  /* "Viền theo vùng": only the outline of each answer region, no inner cell lines, label once per region. */
+  body.pv.region .c { border-width: 0; box-shadow: var(--rb); }
+  body.pv.region .c:not(.rep) { color: transparent; }
+
+  /* ---------- menu, dialogs, toast ---------- */
+  .menu { position: relative; }
+  .menu-pop { position: absolute; right: 0; top: 40px; min-width: 230px; background: var(--panel); border: 1px solid var(--line);
+              border-radius: 10px; box-shadow: 0 12px 32px rgba(16,24,40,.16); padding: 6px; display: none; z-index: 30; }
+  .menu.open .menu-pop { display: block; }
+  .menu-pop button { display: flex; width: 100%; gap: 10px; align-items: center; border: 0; background: none; padding: 8px 10px; border-radius: 7px; cursor: pointer; text-align: left; }
+  .menu-pop button:hover { background: #f2f4f7; }
+  .menu-pop hr { border: 0; border-top: 1px solid var(--line); margin: 6px 0; }
+  .menu-pop .danger { color: var(--danger); }
+  .menu-pop small { color: var(--muted); margin-left: auto; }
+
+  dialog { border: 0; border-radius: 14px; padding: 0; width: min(560px, calc(100vw - 32px)); box-shadow: 0 24px 60px rgba(16,24,40,.25); color: var(--text); }
+  dialog.wide { width: min(860px, calc(100vw - 32px)); }
+  dialog::backdrop { background: rgba(16,24,40,.45); backdrop-filter: blur(2px); }
+  .dlg-h { display: flex; align-items: center; padding: 16px 20px 0; }
+  .dlg-h h2 { margin: 0; font-size: 16px; flex: 1; }
+  .dlg-b { padding: 14px 20px; display: flex; flex-direction: column; gap: 14px; max-height: min(70vh, 640px); overflow: auto; }
+  .dlg-f { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px 16px; border-top: 1px solid var(--line); }
+  .fields { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+  .ansGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+  .ansItem { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 9px; padding: 6px 8px; }
+  .ansItem > span { width: 44px; font-size: 12px; color: var(--muted); }
+  .ansItem .seg button { padding: 0 9px; }
+  .ansItem .seg button.on { background: var(--text); color: #fff; }
+  #imgPrev { max-width: 100%; max-height: 42vh; width: auto; height: auto; image-rendering: pixelated; border: 1px solid var(--line); border-radius: 8px; background: #fff; align-self: center; }
+  .statTable { border-collapse: collapse; width: 100%; font-size: 13px; }
+  .statTable th, .statTable td { padding: 5px 8px; border-bottom: 1px solid var(--line); text-align: center; }
+  .statTable th:first-child, .statTable td:first-child { text-align: left; }
+  .statTable td.ok { background: #111; color: #fff; font-weight: 700; border-radius: 4px; }
+  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none;
+           background: #1a1d23; color: #fff; padding: 10px 16px; border-radius: 10px; box-shadow: 0 12px 32px rgba(16,24,40,.25);
+           transition: .2s; max-width: min(640px, calc(100vw - 32px)); z-index: 50; font-size: 13px; }
+  #toast.show { opacity: 1; transform: translateX(-50%); }
+  #toast.error { background: var(--danger); }
+  .spin { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; height: auto; }
+    .side { border-right: 0; border-bottom: 1px solid var(--line); }
+    .stage { height: 80vh; }
+    .brand span.full { display: none; }
+  }
+
+  /* ---------- print: the vector SVG from buildSVG(), nothing else ---------- */
+  /* Zero page margin leaves the browser no room for its own header/footer (date, title, URL);
+     the white border comes from body padding instead. */
+  @page { size: A4 portrait; margin: 0; }
+  #printout { display: none; }
+  @media print {
+    .appbar, .layout, dialog, #toast { display: none !important; }
+    body { background: #fff; padding: 8mm; }
+    #printout { display: block; }
+    /* picture spans the full paper width (inside the 8mm padding); very tall pictures are capped to one page */
+    #printout svg { width: 100%; height: auto; max-height: 280mm; display: block; }
+  }
+</style>
+</head>
+<body>
+<header class="appbar">
+  <div class="brand"><div class="logo" aria-hidden="true"></div><span class="full">Tô Hình Đáp Án</span></div>
+  <div class="seg" id="modeSeg" role="tablist" aria-label="Chế độ">
+    <button data-v="edit" class="on">Chỉnh sửa</button><button data-v="pv">Xem trước</button>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn" id="guideBtn" title="Bật/tắt hướng dẫn nhanh">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 17.5h.01"/></svg>
+    Hướng dẫn</button>
+  <button class="btn primary" id="print" title="In hoặc lưu PDF (vector, nét ở mọi cỡ)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+    In / PDF</button>
+  <div class="menu" id="menu">
+    <button class="btn icon" id="menuBtn" aria-label="Thêm" aria-haspopup="true">
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+    <div class="menu-pop" role="menu">
+      <button id="svg">Tải ảnh vector (SVG)</button>
+      <hr>
+      <button id="save">Lưu file dự án <small>.json</small></button>
+      <button id="load">Mở file dự án…</button>
+      <hr>
+      <button id="reset" class="danger">Xoá hết, bắt đầu lại</button>
+    </div>
+  </div>
+  <input id="file" type="file" accept=".json" hidden>
+  <input id="ifile" type="file" accept="image/*" hidden>
+</header>
+
+<div class="layout">
+  <aside class="side">
+    <section class="card guide" id="guide" hidden>
+      <h3 style="justify-content:space-between">Hướng dẫn nhanh <button class="btn icon ghost" id="guideClose" aria-label="Ẩn hướng dẫn" title="Ẩn (bật lại bằng nút Hướng dẫn)">✕</button></h3>
+      <ol>
+        <li>Chưa có ảnh lưới? Tạo từ ảnh bất kỳ bằng <a href="https://www.ascii-magic.com/app" target="_blank" rel="noopener">ascii-magic.com</a> — <a href="readme.html#tao-anh" target="_blank">xem cách làm</a>.</li>
+        <li><b>Mở ảnh…</b> → kiểm tra số hàng/cột → <b>Dùng lưới này</b>. Sai ô nào thì dùng <b>Tô ô</b>.</li>
+        <li><b>Thêm viền trắng…</b> → <b>Gợi ý tự động</b> để đáp án đúng/sai to ngang nhau.</li>
+        <li><b>Nhập đáp án…</b>: số câu, số lựa chọn, đáp án đúng từng câu.</li>
+        <li><b>Random chia vùng</b> (bấm lại nếu chưa ưng).</li>
+        <li><b>Xem trước</b> → chọn kiểu viền → <b>In / PDF</b>.</li>
+      </ol>
+      <a class="btn" href="readme.html" target="_blank">Xem hướng dẫn chi tiết có hình</a>
+    </section>
+    <section class="card">
+      <h3><span class="step">1</span>Hình</h3>
+      <div class="row2">
+        <button class="btn" id="img" title="Ảnh lưới ô đen/trắng (PNG, JPG…)">Mở ảnh…</button>
+        <button class="btn" id="blank">Lưới trống…</button>
+      </div>
+      <button class="btn" id="padBtn">Thêm viền trắng…</button>
+      <div class="chips" id="infoChips"></div>
+      <p class="hint" id="ratioHint"></p>
+    </section>
+
+    <section class="card">
+      <h3><span class="step">2</span>Câu hỏi &amp; đáp án</h3>
+      <div class="chips" id="qChips"></div>
+      <div class="ansStrip" id="ansStrip"></div>
+      <button class="btn" id="ansBtn">Nhập đáp án…</button>
+    </section>
+
+    <section class="card">
+      <h3><span class="step">3</span>Chia vùng</h3>
+      <button class="btn primary block" id="gen">Random chia vùng</button>
+      <button class="btn" id="statsBtn">Xem số ô từng lựa chọn</button>
+      <p class="hint">Chỉnh tay: chọn vùng (kéo, hoặc Shift + bấm) rồi <b>Merge</b> <span class="kbd">M</span>; bấm đúp để sửa chữ.</p>
+    </section>
+
+    <section class="card">
+      <h3><span class="step">4</span>Hiển thị &amp; in</h3>
+      <label class="field">Kiểu viền
+        <div class="seg full" id="styleSeg"><button data-v="cell">Viền từng ô</button><button data-v="region">Viền theo vùng</button></div>
+      </label>
+      <label class="field">Khung hình
+        <select id="shape">
+          <option value="square">Cả hình vuông</option>
+          <option value="cells">Từng ô vuông</option>
+          <option value="image">Theo tỉ lệ ảnh gốc</option>
+        </select>
+      </label>
+      <label class="field">Cỡ chữ <input id="fs" type="range" min="0.3" max="2" step="0.05" value="0.7"></label>
+    </section>
+  </aside>
+
+  <main class="stage">
+    <div class="toolbar">
+      <div class="seg edit-only" id="toolSeg" aria-label="Công cụ">
+        <button data-v="select" class="on" title="Chọn vùng (V)">Chọn vùng</button>
+        <button data-v="paint" title="Bấm/kéo để đổi ô đen ↔ trắng (B)">Tô ô</button>
+      </div>
+      <div class="sep edit-only"></div>
+      <button class="btn edit-only" id="merge" title="Gộp các vùng đang chọn (M)">Merge</button>
+      <button class="btn edit-only" id="split">Tách vùng</button>
+      <input class="edit-only" id="txt" type="text" placeholder="Chữ của vùng đang chọn" disabled>
+      <div class="zoom">
+        <button class="btn icon ghost" id="zoomOut" aria-label="Thu nhỏ" title="Thu nhỏ (−)">−</button>
+        <button class="btn ghost" id="zoomVal" title="Vừa khung">100%</button>
+        <button class="btn icon ghost" id="zoomIn" aria-label="Phóng to" title="Phóng to (+)">+</button>
+      </div>
+    </div>
+    <div id="wrap"><div id="grid"></div></div>
+  </main>
+</div>
+
+<!-- dialogs -->
+<dialog id="dlgAns" class="wide">
+  <div class="dlg-h"><h2>Câu hỏi &amp; đáp án đúng</h2><button class="btn icon ghost" data-close aria-label="Đóng">✕</button></div>
+  <div class="dlg-b">
+    <div class="fields">
+      <label class="field">Số câu <input id="nq" type="number" min="1" max="300"></label>
+      <label class="field">Số lựa chọn mỗi câu <div class="seg" id="kSeg"></div></label>
+      <label class="field" style="flex:1;min-width:220px">Dán nhanh đáp án (mỗi câu 1 chữ)
+        <div style="display:flex;gap:6px"><input id="paste" type="text" placeholder="vd: BAADADACBD… hoặc 1B 2A 3A" style="flex:1"><button class="btn" id="pasteApply">Áp dụng</button></div>
+      </label>
+    </div>
+    <p class="hint">Ô của đáp án đúng là các ô đen trong hình. Đổi đáp án xong nhớ bấm <b>Random chia vùng</b> lại.</p>
+    <div class="ansGrid" id="ansGrid"></div>
+  </div>
+  <div class="dlg-f"><button class="btn primary" data-close>Xong</button></div>
+</dialog>
+
+<dialog id="dlgBlank">
+  <form method="dialog">
+    <div class="dlg-h"><h2>Tạo lưới trống</h2></div>
+    <div class="dlg-b">
+      <div class="fields">
+        <label class="field">Số hàng <input id="bRows" type="number" min="1" max="200" required></label>
+        <label class="field">Số cột <input id="bCols" type="number" min="1" max="200" required></label>
+      </div>
+      <p class="hint">Sau khi tạo, dùng công cụ <b>Tô ô</b> để vẽ hình.</p>
+    </div>
+    <div class="dlg-f"><button class="btn" value="cancel" formnovalidate>Huỷ</button><button class="btn primary" value="ok">Tạo lưới</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgPad">
+  <form method="dialog">
+    <div class="dlg-h"><h2>Thêm viền trắng</h2></div>
+    <div class="dlg-b">
+      <p class="hint" id="padNeed"></p>
+      <div class="fields">
+        <label class="field">Trên <input id="pt" type="number" min="0" max="100" value="0"></label>
+        <label class="field">Trái <input id="pl" type="number" min="0" max="100" value="0"></label>
+        <label class="field">Phải <input id="pr" type="number" min="0" max="100" value="0"></label>
+        <label class="field">Dưới <input id="pb" type="number" min="0" max="100" value="0"></label>
+        <button class="btn" type="button" id="padSuggest">Gợi ý tự động</button>
+      </div>
+      <p class="hint" id="padAfter"></p>
+    </div>
+    <div class="dlg-f"><button class="btn" value="cancel">Huỷ</button><button class="btn primary" value="ok">Thêm viền</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgImg" class="wide">
+  <form method="dialog">
+    <div class="dlg-h"><h2>Chuyển ảnh thành lưới</h2></div>
+    <div class="dlg-b">
+      <div class="fields">
+        <label class="field">Số hàng <input id="iRows" type="number" min="1" max="200"></label>
+        <label class="field">Số cột <input id="iCols" type="number" min="1" max="200"></label>
+        <label class="field" style="flex:1;min-width:200px">Độ đậm để tính là ô đen <input id="iThr" type="range" min="1" max="254"></label>
+      </div>
+      <p class="hint" id="iInfo"></p>
+      <canvas id="imgPrev"></canvas>
+    </div>
+    <div class="dlg-f"><button class="btn" value="cancel">Huỷ</button><button class="btn primary" value="ok">Dùng lưới này</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgStats" class="wide">
+  <div class="dlg-h"><h2>Số ô của từng lựa chọn</h2><button class="btn icon ghost" data-close aria-label="Đóng">✕</button></div>
+  <div class="dlg-b" id="statsBody"></div>
+  <div class="dlg-f"><button class="btn primary" data-close>Đóng</button></div>
+</dialog>
+
+<dialog id="dlgConfirm">
+  <form method="dialog">
+    <div class="dlg-h"><h2 id="cTitle">Xác nhận</h2></div>
+    <div class="dlg-b"><p id="cText" style="margin:0"></p></div>
+    <div class="dlg-f"><button class="btn" value="cancel">Huỷ</button><button class="btn primary" id="cOk" value="ok">Tiếp tục</button></div>
+  </form>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="printout"></div>
+
+<script>
+// Built-in example (sheet "Fill" of "thánh Teresa grid_pattern.numbers", # = black) used on first open
+// and after Reset. Answers are the bold options of "Danh sách câu hỏi Giáo xứ Phú Bình.pages"
+// (Q7 had no bold option; the author confirmed A).
+const EXAMPLE_ANSWERS = 'BAADADACBDBBCBCDCCAA';
+const EXAMPLE = `
+..................#####################....................
+...............#####.................#####.................
+.............####.......................#####..............
+...........####............................##..............
+..........###.............#######...........##.............
+..........##...........#############........##.............
+.........###.........#################.......##............
+.........##.........###################......###...........
+........###........####################.......##...........
+........##........#############..######.......##...........
+.......##.........#########.........###........##..........
+.......##........########...........###........##..........
+.......##.......########............###........##..........
+........##.....#########...........####........#####.......
+........###...##########..........####........##...##......
+.........###.########.##.........#####.......##.....#......
+.........###########...##......######.......#......##......
+..........#########......##########..#####.##.....##.......
+.........#########..............##......####.....##........
+.......#########.##.............##..............##.........
+......########....##.............####..........##..........
+....########.......##..........###.####.........####.......
+....#####............###.....###.....###............####...
+..######................#####.......##.....##..........##..
+.######..................#..#......##......#######......#..
+.#####..................##...##...##.....###.....####..##..
+.####..................##.....#..##.....####........####...
+####...................##########......######..............
+####.................##.......##......###.####.............
+###................##........###.....##....####............
+###...............##........###.....##......####...........`.trim().split('\n');
+const KEY = 'answer-grid-v3', OLD_KEY = 'teresa-grid-fill-v2', ALPHA = 'ABCDEF';
+const PREFS = { style: 'cell', shape: 'square', fs: 0.7, aspect: 1, zoom: 1, guide: true };
+
+// Everything below is saved to localStorage on every change; only "Xoá hết" clears it.
+let pattern, answers, K, reg, texts, nextId, prefs;
+// Derived from the above.
+let R, C, black, LETTERS, cells = [];
+let sel = new Set(), dragging = false, painting = false, paintTo = false;
+
+const $ = id => document.getElementById(id);
+const grid = $('grid'), txt = $('txt');
+
+// ---------- feedback: toast + confirm dialog ----------
+let toastTimer;
+function toast(text, { error = false, busy = false, ms = 3500 } = {}) {
+  const t = $('toast');
+  t.textContent = text;
+  if (busy) { const s = document.createElement('span'); s.className = 'spin'; s.style.cssText = 'display:inline-block;vertical-align:-2px;margin-right:8px'; t.prepend(s); }
+  t.className = 'show' + (error ? ' error' : '');
+  clearTimeout(toastTimer);
+  if (!busy) toastTimer = setTimeout(() => t.className = '', ms);
+}
+function ask(text, { title = 'Xác nhận', ok = 'Tiếp tục', danger = false } = {}) {
+  const d = $('dlgConfirm');
+  $('cTitle').textContent = title; $('cText').textContent = text; $('cOk').textContent = ok;
+  $('cOk').style.background = $('cOk').style.borderColor = danger ? 'var(--danger)' : '';
+  d.returnValue = ''; d.showModal();
+  return new Promise(res => d.addEventListener('close', () => res(d.returnValue === 'ok'), { once: true }));
+}
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => b.closest('dialog').close('cancel'));
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close('cancel'); }));
+
+// ---------- state ----------
+// Margin on top/left/right (2 rows, 4 cols) makes white ≈ 3 × black, so all 4 options can be the same size.
+const pad = (pat, t, l, r, b) => {
+  const w = pat[0].length + l + r, rows = pat.map(row => '.'.repeat(l) + row + '.'.repeat(r));
+  return [...Array(t).fill('.'.repeat(w)), ...rows, ...Array(b).fill('.'.repeat(w))];
+};
+const defaultState = () => ({ pattern: pad(EXAMPLE, 2, 4, 4, 0), answers: EXAMPLE_ANSWERS, K: 4, prefs: { ...PREFS } });
+
+function resetRegions() {
+  reg = black.map((row, r) => row.map((_, c) => r * C + c));
+  texts = {}; nextId = R * C; sel.clear();
+}
+const hasRegions = () => Object.keys(texts).length > 0 || reg.some((row, r) => row.some((id, c) => id !== r * C + c));
+
+function applyState(s) {
+  pattern = s.pattern; answers = s.answers; K = s.K; prefs = { ...PREFS, ...s.prefs };
+  R = pattern.length; C = pattern[0].length; LETTERS = ALPHA.slice(0, K);
+  black = pattern.map(row => [...row].map(ch => ch === '#'));
+  if (s.reg?.length === R && s.reg[0]?.length === C) { reg = s.reg; texts = s.texts || {}; nextId = s.nextId; sel.clear(); }
+  else resetRegions();
+  buildGrid(); syncControls(); render();
+}
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify({ pattern, answers, K, reg, texts, nextId, prefs })); } catch {}
+}
+function validState(s) {
+  return s && Array.isArray(s.pattern) && s.pattern.length && s.pattern.every(r => typeof r === 'string' && r.length === s.pattern[0].length && /^[#.]+$/.test(r))
+    && typeof s.answers === 'string' && s.answers.length > 0 && Number.isInteger(s.K) && s.K >= 2 && s.K <= 6 && [...s.answers].every(a => ALPHA.slice(0, s.K).includes(a));
+}
+function setPattern(p) {
+  pattern = p; R = p.length; C = p[0].length;
+  black = p.map(row => [...row].map(ch => ch === '#'));
+  resetRegions(); buildGrid(); render();
+}
+const confirmReplace = () => hasRegions()
+  ? ask('Đổi hình sẽ xoá các vùng đáp án đã chia. Tiếp tục?', { title: 'Đổi hình?' }) : Promise.resolve(true);
+
+// ---------- grid ----------
+// Picture width and height as fractions of the longer side, from the chosen shape.
+function frame() {
+  const a = prefs.shape === 'cells' ? C / R : prefs.shape === 'image' ? prefs.aspect || 1 : 1;
+  return a >= 1 ? [1, 1 / a] : [a, 1];
+}
+function buildGrid() {
+  grid.innerHTML = ''; cells = [];
+  const [wf, hf] = frame();
+  grid.style.setProperty('--cw', `calc(var(--gs) * ${wf} / ${C})`);
+  grid.style.setProperty('--ch', `calc(var(--gs) * ${hf} / ${R})`);
+  grid.style.gridTemplateColumns = `repeat(${C}, var(--cw))`;
+  grid.style.gridTemplateRows = `repeat(${R}, var(--ch))`;
+  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+    const d = document.createElement('div');
+    d.className = 'c' + (black[r][c] ? ' b' : '');
+    d.dataset.r = r; d.dataset.c = c;
+    grid.appendChild(d); cells.push(d);
+  }
+  fitGrid();
+}
+// --gs = the longer picture side in px: fit the canvas area, times the zoom.
+function fitGrid() {
+  const [wf, hf] = frame(), b = $('wrap').getBoundingClientRect();
+  const fit = Math.max(280, Math.min((b.width - 32) / wf, (b.height - 32) / hf));
+  grid.style.setProperty('--gs', fit * prefs.zoom + 'px');
+  $('zoomVal').textContent = Math.round(prefs.zoom * 100) + '%';
+}
+new ResizeObserver(fitGrid).observe($('wrap'));
+
+const cellsOf = id => { const out = []; for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (reg[r][c] === id) out.push([r, c]); return out; };
+const at = (r, c) => (r < 0 || c < 0 || r >= R || c >= C) ? -1 : reg[r][c];
+const LABEL = /^(\d+)([A-Z])$/;
+
+function render() {
+  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+    const d = cells[r * C + c], id = reg[r][c];
+    d.classList.toggle('b', black[r][c]);
+    // Region boundary sides get the strong color; each neighbour draws 1px so a shared edge reads as 2px.
+    const side = (rr, cc) => at(rr, cc) !== id ? 'var(--edge)' : '';
+    d.style.borderTopColor = side(r - 1, c);
+    d.style.borderBottomColor = side(r + 1, c);
+    d.style.borderLeftColor = side(r, c - 1);
+    d.style.borderRightColor = side(r, c + 1);
+    // Same outline as inset shadows for "Viền theo vùng": borders with transparent neighbours
+    // leave mitred gaps at the corners, shadows don't.
+    const sh = [];
+    if (at(r - 1, c) !== id) sh.push('inset 0 1px 0 #000');
+    if (at(r + 1, c) !== id) sh.push('inset 0 -1px 0 #000');
+    if (at(r, c - 1) !== id) sh.push('inset 1px 0 0 #000');
+    if (at(r, c + 1) !== id) sh.push('inset -1px 0 0 #000');
+    d.style.setProperty('--rb', sh.join(',') || 'none');
+    d.classList.toggle('sel', sel.has(id));
+    d.textContent = (texts[id] || '').replace(LABEL, '$1\n$2');
+  }
+  // Regions may touch only diagonally, which draws as separate outlined shapes, so every side-connected
+  // piece gets its own label cell (the one nearest the piece's centroid) in "Viền theo vùng" mode.
+  cells.forEach(d => d.classList.remove('rep'));
+  for (const pc of pieces4(i => reg[(i / C) | 0][i % C])) {
+    const cr = pc.reduce((a, i) => a + ((i / C) | 0), 0) / pc.length, cc = pc.reduce((a, i) => a + i % C, 0) / pc.length;
+    const d2 = i => (((i / C) | 0) - cr) ** 2 + (i % C - cc) ** 2;
+    cells[pc.reduce((b, i) => d2(i) < d2(b) ? i : b)].classList.add('rep');
+  }
+  const one = sel.size === 1 ? [...sel][0] : null;
+  txt.disabled = one === null;
+  if (document.activeElement !== txt) txt.value = one === null ? '' : (texts[one] || '');
+  $('merge').disabled = sel.size < 2; $('split').disabled = !sel.size;
+  showSummary(); persist();
+}
+
+// Sidebar summary of the picture and the questions.
+function showSummary() {
+  const B = black.flat().filter(Boolean).length, W = R * C - B, need = (K - 1) * B;
+  $('infoChips').innerHTML = `<span class="chip">${R} × ${C} ô</span><span class="chip dark">${B} đen</span><span class="chip">${W} trắng</span>`;
+  // Each question has 1 black (correct) and K-1 white (wrong) options; equal sizes need white ≈ (K-1) × black.
+  const h = $('ratioHint');
+  if (!B) { h.innerHTML = 'Chưa có ô đen. Mở ảnh hoặc dùng công cụ <b>Tô ô</b>.'; h.className = 'hint warn'; }
+  else if (Math.abs(W - need) <= need * 0.1) { h.textContent = `Tỉ lệ trắng/đen tốt (lý tưởng ≈ ${need} trắng), các lựa chọn sẽ to ngang nhau.`; h.className = 'hint'; }
+  else if (W < need) { h.textContent = `Thiếu ~${need - W} ô trắng so với lý tưởng (${need}): đáp án đúng sẽ to hơn đáp án sai. Nên thêm viền trắng.`; h.className = 'hint warn'; }
+  else { h.textContent = `Dư ~${W - need} ô trắng so với lý tưởng (${need}): đáp án sai sẽ to hơn đáp án đúng.`; h.className = 'hint warn'; }
+  $('qChips').innerHTML = `<span class="chip">${answers.length} câu</span><span class="chip">${K} lựa chọn (A–${LETTERS.at(-1)})</span>`;
+  $('ansStrip').innerHTML = [...answers].map((a, q) => `<span><b>${q + 1}</b>${a}</span>`).join('');
+}
+
+function syncControls() {
+  $('shape').value = prefs.shape; $('fs').value = prefs.fs;
+  $('guide').hidden = !prefs.guide; $('guideBtn').classList.toggle('on', prefs.guide);
+  document.body.classList.toggle('region', prefs.style === 'region');
+  document.documentElement.style.setProperty('--fs', prefs.fs);
+  setSeg($('styleSeg'), prefs.style);
+}
+const setSeg = (seg, v) => seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === String(v)));
+
+// ---------- manual editing ----------
+function merge() {
+  const ids = [...sel]; if (ids.length < 2) return;
+  const cs = ids.flatMap(cellsOf);
+  const color = black[cs[0][0]][cs[0][1]];
+  if (cs.some(([r, c]) => black[r][c] !== color)) { toast('Chỉ merge được các ô cùng màu.', { error: true }); return; }
+  // Must be one connected piece (diagonals count), otherwise the "region" would be scattered islands.
+  const set = new Set(cs.map(([r, c]) => r * C + c)), seen = new Set([[...set][0]]), q = [[...set][0]];
+  while (q.length) for (const n of nb8(q.pop())) if (set.has(n) && !seen.has(n)) { seen.add(n); q.push(n); }
+  if (seen.size !== set.size) { toast('Các ô phải liền nhau.', { error: true }); return; }
+  const keep = Math.min(...ids);
+  // Keep existing text; if several regions had text, join them in selection order.
+  const t = ids.map(i => texts[i]).filter(Boolean).join(' ');
+  ids.forEach(i => delete texts[i]);
+  if (t) texts[keep] = t;
+  cs.forEach(([r, c]) => reg[r][c] = keep);
+  sel = new Set([keep]); render();
+}
+function split() {
+  // Every cell already shows the region's text, so each split-off cell keeps it.
+  for (const id of sel) cellsOf(id).forEach(([r, c], i) => { if (i) { reg[r][c] = nextId; if (texts[id]) texts[nextId] = texts[id]; nextId++; } });
+  sel.clear(); render();
+}
+function paintCell(d) {
+  const r = +d.dataset.r, c = +d.dataset.c;
+  if (black[r][c] === paintTo) return;
+  black[r][c] = paintTo;
+  pattern[r] = pattern[r].slice(0, c) + (paintTo ? '#' : '.') + pattern[r].slice(c + 1);
+  d.classList.toggle('b', paintTo);
+}
+
+async function setTool(v) {
+  if (v === 'paint' && !painting && hasRegions()) {
+    if (!await ask('Tô lại hình sẽ xoá các vùng đáp án đã chia. Tiếp tục?', { title: 'Chuyển sang Tô ô?' })) return;
+    resetRegions();
+  }
+  painting = v === 'paint';
+  setSeg($('toolSeg'), v);
+  document.body.classList.toggle('painting', painting);
+  sel.clear(); render();
+  if (painting) toast('Bấm hoặc kéo trên lưới để đổi ô đen ↔ trắng.');
+}
+$('toolSeg').onclick = e => { const b = e.target.closest('button'); if (b) setTool(b.dataset.v); };
+
+grid.addEventListener('mousedown', e => {
+  const d = e.target.closest('.c'); if (!d || document.body.classList.contains('pv')) return;
+  dragging = true;
+  if (painting) { paintTo = !black[d.dataset.r][d.dataset.c]; paintCell(d); return; }
+  const id = reg[d.dataset.r][d.dataset.c];
+  if (e.shiftKey || e.metaKey || e.ctrlKey) sel.has(id) ? sel.delete(id) : sel.add(id);
+  else sel = new Set([id]);
+  render();
+});
+grid.addEventListener('mouseover', e => {
+  const d = e.target.closest('.c'); if (!dragging || !d) return;
+  if (painting) { paintCell(d); return; }
+  const id = reg[d.dataset.r][d.dataset.c];
+  if (!sel.has(id)) { sel.add(id); render(); }
+});
+addEventListener('mouseup', () => { if (dragging && painting) render(); dragging = false; });
+grid.addEventListener('dblclick', () => { if (!painting && sel.size === 1) txt.focus(); });
+txt.addEventListener('input', () => { const id = [...sel][0]; texts[id] = txt.value; render(); });
+txt.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === 'Escape') txt.blur(); });
+$('merge').onclick = merge;
+$('split').onclick = split;
+
+addEventListener('keydown', e => {
+  if (e.target.closest('input, select, textarea') || document.querySelector('dialog[open]') || e.metaKey || e.ctrlKey) return;
+  const k = e.key.toLowerCase();
+  if (k === 'm') merge();
+  else if (k === 'v') setTool('select');
+  else if (k === 'b') setTool('paint');
+  else if (k === '+' || k === '=') zoom(1.25);
+  else if (k === '-') zoom(0.8);
+  else if (k === 'escape') { sel.clear(); render(); }
+});
+
+// ---------- view: mode, zoom, display options ----------
+function setMode(v) {
+  document.body.classList.toggle('pv', v === 'pv');
+  setSeg($('modeSeg'), v);
+  if (v === 'pv' && painting) setTool('select');
+  sel.clear(); render();
+}
+$('modeSeg').onclick = e => { const b = e.target.closest('button'); if (b) setMode(b.dataset.v); };
+function zoom(f) { prefs.zoom = f ? Math.min(4, Math.max(0.3, prefs.zoom * f)) : 1; fitGrid(); persist(); }
+$('zoomIn').onclick = () => zoom(1.25);
+$('zoomOut').onclick = () => zoom(0.8);
+$('zoomVal').onclick = () => zoom(0);
+$('styleSeg').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  prefs.style = b.dataset.v; syncControls(); persist();
+  if (!document.body.classList.contains('pv')) toast('Kiểu viền áp dụng khi Xem trước và khi in.');
+};
+$('shape').onchange = e => { prefs.shape = e.target.value; buildGrid(); render(); };
+$('fs').oninput = e => { prefs.fs = +e.target.value; document.documentElement.style.setProperty('--fs', prefs.fs); persist(); };
+
+// Quick guide card: shown on first open, toggled from the header, remembered with the rest of the prefs.
+const setGuide = on => { prefs.guide = on; syncControls(); persist(); };
+$('guideBtn').onclick = () => setGuide(!prefs.guide);
+$('guideClose').onclick = () => setGuide(false);
+
+// ---------- menu ----------
+$('menuBtn').onclick = e => { e.stopPropagation(); $('menu').classList.toggle('open'); };
+addEventListener('click', e => { if (!e.target.closest('.menu-pop')) $('menu').classList.remove('open'); });
+document.querySelectorAll('.menu-pop button').forEach(b => b.addEventListener('click', () => $('menu').classList.remove('open')));
+
+// ---------- step 1: picture ----------
+$('blank').onclick = () => {
+  $('bRows').value = R; $('bCols').value = C;
+  const d = $('dlgBlank'); d.returnValue = ''; d.showModal();
+  d.addEventListener('close', async () => {
+    if (d.returnValue !== 'ok') return;
+    const r = +$('bRows').value, c = +$('bCols').value;
+    if (!(r >= 1 && c >= 1 && r * c <= 40000)) { toast('Kích thước không hợp lệ (tối đa 40000 ô).', { error: true }); return; }
+    if (!await confirmReplace()) return;
+    setPattern(Array(r).fill('.'.repeat(c)));
+    setTool('paint');
+  }, { once: true });
+};
+
+// Margin that brings white to ≈ (K-1) × black: side margins and top margin in proportion to the grid,
+// nothing at the bottom (the picture usually sits on the bottom edge).
+function suggestPad() {
+  const B = black.flat().filter(Boolean).length, deficit = (K - 1) * B - (R * C - B);
+  if (deficit <= 0) return null;
+  let best = null;
+  for (let t = 0; t <= 40; t++) for (let s = 0; s <= 40; s++) {
+    const extra = (R + t) * (C + 2 * s) - R * C;
+    const cost = Math.abs(extra - deficit) / deficit + Math.abs(t / R - s / C);
+    if (!best || cost < best.cost) best = { t, s, cost };
+  }
+  return best;
+}
+function padPreview() {
+  const B = black.flat().filter(Boolean).length, v = id => Math.max(0, parseInt($(id).value) || 0);
+  const r2 = R + v('pt') + v('pb'), c2 = C + v('pl') + v('pr');
+  $('padAfter').textContent = `Sau khi thêm: ${r2} × ${c2} ô, ${r2 * c2 - B} ô trắng (lý tưởng ≈ ${(K - 1) * B}).`;
+}
+$('padBtn').onclick = () => {
+  const B = black.flat().filter(Boolean).length;
+  $('padNeed').textContent = `Hiện có ${B} ô đen, ${R * C - B} ô trắng. Với ${K} lựa chọn mỗi câu, lý tưởng là khoảng ${(K - 1) * B} ô trắng để đáp án đúng và sai to ngang nhau.`;
+  ['pt', 'pl', 'pr', 'pb'].forEach(id => $(id).value = 0);
+  padPreview();
+  const d = $('dlgPad'); d.returnValue = ''; d.showModal();
+  d.addEventListener('close', async () => {
+    if (d.returnValue !== 'ok') return;
+    const v = id => Math.max(0, parseInt($(id).value) || 0), t = v('pt'), l = v('pl'), r = v('pr'), b = v('pb');
+    if (!(t + l + r + b)) return;
+    if (!await confirmReplace()) return;
+    setPattern(pad(pattern, t, l, r, b));
+    toast(`Đã thêm viền: lưới giờ là ${R} × ${C} ô.`);
+  }, { once: true });
+};
+['pt', 'pl', 'pr', 'pb'].forEach(id => $(id).oninput = padPreview);
+$('padSuggest').onclick = () => {
+  const s = suggestPad();
+  if (!s) { toast('Đã đủ ô trắng, không cần thêm viền.'); return; }
+  $('pt').value = s.t; $('pl').value = $('pr').value = s.s; $('pb').value = 0; padPreview();
+};
+
+let imgData = null;
+function drawImgPreview() {
+  const rows = +$('iRows').value, cols = +$('iCols').value;
+  if (!(rows >= 1 && cols >= 1 && rows * cols <= 40000)) return;
+  const p = imageToPattern({ ...imgData, t: +$('iThr').value }, rows, cols);
+  const cw = Math.max(3, Math.floor(780 / cols)), ch = Math.max(3, Math.round(cw * (imgData.H / rows) / (imgData.W / cols)));
+  const cv = $('imgPrev'); cv.width = cols * cw + 1; cv.height = rows * ch + 1;
+  const x = cv.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = '#111';
+  p.forEach((row, r) => [...row].forEach((v, c) => { if (v === '#') x.fillRect(c * cw, r * ch, cw, ch); }));
+  x.fillStyle = 'rgba(0,0,0,.18)';
+  for (let c = 0; c <= cols; c++) x.fillRect(c * cw, 0, 1, cv.height);
+  for (let r = 0; r <= rows; r++) x.fillRect(0, r * ch, cv.width, 1);
+  $('iInfo').textContent = `Tự nhận được ${imgData.rows} × ${imgData.cols} ô. Nếu lưới xem trước lệch so với ảnh, sửa số hàng/cột; nếu ô đen/trắng sai nhiều, kéo "Độ đậm".`;
+  return p;
+}
+$('img').onclick = () => $('ifile').click();
+$('ifile').onchange = async () => {
+  const f = $('ifile').files[0]; $('ifile').value = '';
+  if (!f) return;
+  try { toast('Đang phân tích ảnh…', { busy: true }); imgData = await analyzeImage(f); $('toast').className = ''; }
+  catch (e) { toast('Không đọc được ảnh: ' + (e.message || e), { error: true }); return; }
+  $('iRows').value = imgData.rows; $('iCols').value = imgData.cols; $('iThr').value = Math.max(1, imgData.t);
+  drawImgPreview();
+  const d = $('dlgImg'); d.returnValue = ''; d.showModal();
+  d.addEventListener('close', async () => {
+    if (d.returnValue !== 'ok') return;
+    const p = drawImgPreview();
+    if (!p) { toast('Số hàng/cột không hợp lệ (tối đa 40000 ô).', { error: true }); return; }
+    if (!await confirmReplace()) return;
+    prefs.shape = 'image'; prefs.aspect = imgData.W / imgData.H;
+    setPattern(p); syncControls(); render();
+    toast(`Đã chuyển ảnh thành ${R} × ${C} ô. Ô nào sai thì dùng công cụ Tô ô để sửa.`, { ms: 5000 });
+  }, { once: true });
+};
+['iRows', 'iCols', 'iThr'].forEach(id => $(id).oninput = drawImgPreview);
+
+// ---------- step 2: questions ----------
+function buildAnsDialog() {
+  $('nq').value = answers.length;
+  $('kSeg').innerHTML = [2, 3, 4, 5, 6].map(k => `<button type="button" data-v="${k}" class="${k === K ? 'on' : ''}">${k}</button>`).join('');
+  $('ansGrid').innerHTML = [...answers].map((a, q) =>
+    `<div class="ansItem"><span>Câu ${q + 1}</span><div class="seg" data-q="${q}">${[...LETTERS].map(L =>
+      `<button type="button" data-v="${L}" class="${L === a ? 'on' : ''}">${L}</button>`).join('')}</div></div>`).join('');
+}
+let answersAtOpen;
+$('ansBtn').onclick = () => {
+  answersAtOpen = answers + K; buildAnsDialog();
+  const d = $('dlgAns'); d.showModal();
+  d.addEventListener('close', () => {
+    if (answers + K !== answersAtOpen && hasRegions()) toast('Đáp án đã đổi: bấm "Random chia vùng" để chia lại cho đúng.', { ms: 5000 });
+  }, { once: true });
+};
+$('ansGrid').onclick = e => {
+  const b = e.target.closest('button'), seg = b?.closest('.seg'); if (!b) return;
+  const q = +seg.dataset.q;
+  answers = answers.slice(0, q) + b.dataset.v + answers.slice(q + 1);
+  setSeg(seg, b.dataset.v); render();
+};
+$('nq').onchange = () => {
+  const n = Math.min(300, Math.max(1, parseInt($('nq').value) || 1));
+  answers = n <= answers.length ? answers.slice(0, n) : answers + 'A'.repeat(n - answers.length);
+  buildAnsDialog(); render();
+};
+$('kSeg').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  K = +b.dataset.v; LETTERS = ALPHA.slice(0, K);
+  // Answers beyond the new option range fall back to A.
+  answers = [...answers].map(a => LETTERS.includes(a) ? a : 'A').join('');
+  buildAnsDialog(); render();
+};
+// Accepts "BAAD…" (one letter per question, spaces/commas ignored) or numbered "1B 2A 3.C".
+$('pasteApply').onclick = () => {
+  const s = $('paste').value.toUpperCase();
+  const numbered = [...s.matchAll(/(\d+)\s*[.:)\-]?\s*([A-F])/g)];
+  let list;
+  if (numbered.length) { list = []; numbered.forEach(m => list[+m[1] - 1] = m[2]); list = Array.from(list, v => v || 'A'); }
+  else list = [...s.replace(/[^A-F]/g, '')];
+  if (!list.length) { toast('Không thấy đáp án nào (dùng chữ A–F).', { error: true }); return; }
+  const maxL = list.reduce((m, a) => a > m ? a : m, 'A');
+  if (ALPHA.indexOf(maxL) >= K) { K = ALPHA.indexOf(maxL) + 1; LETTERS = ALPHA.slice(0, K); }
+  answers = list.join(''); $('paste').value = '';
+  buildAnsDialog(); render();
+  toast(`Đã nhập ${answers.length} câu, ${K} lựa chọn.`);
+};
+
+// ---------- step 3: generate + stats ----------
+$('gen').onclick = async () => {
+  const why = whyImpossible();
+  if (why) { toast(why, { error: true, ms: 6000 }); return; }
+  if (hasRegions() && !await ask('Random lại sẽ thay toàn bộ vùng và chữ hiện tại.', { title: 'Chia vùng lại?', ok: 'Random lại' })) return;
+  if (painting) await setTool('select');
+  $('gen').disabled = true;
+  toast('Đang chia vùng… (vài giây)', { busy: true });
+  // Let the toast paint before the few seconds of blocking work.
+  setTimeout(() => {
+    const owner = generate();
+    $('gen').disabled = false;
+    if (!owner) { toast('Không tìm được cách chia, bấm lại thử (hoặc chỉnh hình / số câu).', { error: true, ms: 6000 }); return; }
+    resetRegions();
+    owner.forEach((o, i) => { reg[(i / C) | 0][i % C] = R * C + o; });
+    for (let o = 0; o < answers.length * K; o++) texts[R * C + o] = (((o / K) | 0) + 1) + LETTERS[o % K];
+    nextId = R * C + answers.length * K;
+    render();
+    toast(`Đã chia ${answers.length} câu × ${K} lựa chọn. Bấm lại để ra phương án khác.`);
+  }, 40);
+};
+$('statsBtn').onclick = () => {
+  const cnt = {};
+  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) { const t = texts[reg[r][c]]; if (t) cnt[t] = (cnt[t] || 0) + 1; }
+  $('statsBody').innerHTML = !Object.keys(cnt).length
+    ? '<p class="hint">Chưa chia vùng. Bấm <b>Random chia vùng</b> trước.</p>'
+    : `<p class="hint">Ô đen = đáp án đúng.</p><table class="statTable"><tr><th>Câu</th>${[...LETTERS].map(L => `<th>${L}</th>`).join('')}<th>Tổng</th></tr>` +
+      [...answers].map((a, q) => {
+        const v = [...LETTERS].map(L => cnt[(q + 1) + L] || 0);
+        return `<tr><td>Câu ${q + 1}</td>${v.map((n, i) => `<td class="${LETTERS[i] === a ? 'ok' : ''}">${n}</td>`).join('')}<td>${v.reduce((x, y) => x + y)}</td></tr>`;
+      }).join('') + '</table>';
+  $('dlgStats').showModal();
+};
+
+// ---------- output + project files ----------
+// Vector version of the Preview (current border style) for printing and download.
+function buildSVG() {
+  const [wf, hf] = frame();
+  const Wd = 1000 * wf, Ht = 1000 * hf, w = Wd / C, h = Ht / R, region = prefs.style === 'region';
+  const f = n => +n.toFixed(2);
+  let d = '';
+  if (region) {
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+      const id = reg[r][c];
+      if (at(r - 1, c) !== id) d += `M${f(c * w)} ${f(r * h)}H${f((c + 1) * w)}`;
+      if (at(r, c - 1) !== id) d += `M${f(c * w)} ${f(r * h)}V${f((r + 1) * h)}`;
+      if (r === R - 1) d += `M${f(c * w)} ${f(Ht)}H${f((c + 1) * w)}`;
+      if (c === C - 1) d += `M${f(Wd)} ${f(r * h)}V${f((r + 1) * h)}`;
+    }
+  } else {
+    for (let r = 0; r <= R; r++) d += `M0 ${f(r * h)}H${f(Wd)}`;
+    for (let c = 0; c <= C; c++) d += `M${f(c * w)} 0V${f(Ht)}`;
+  }
+  const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  let text = '';
+  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) {
+    const t = texts[reg[r][c]];
+    if (!t || (region && !cells[r * C + c].classList.contains('rep'))) continue;
+    const x = f((c + 0.5) * w), y = f((r + 0.5) * h), m = t.match(LABEL);
+    text += m
+      ? `<text x="${x}" y="${y}"><tspan x="${x}" dy="-0.525em">${m[1]}</tspan><tspan x="${x}" dy="1.05em">${m[2]}</tspan></text>`
+      : `<text x="${x}" y="${y}">${esc(t)}</text>`;
+  }
+  // Stroke widths scale with the cell so small grids don't print hairlines and big ones don't blot.
+  const cell = Math.min(w, h), sw = region ? Math.max(1.2, cell * 0.16) : Math.max(0.6, cell * 0.07);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${f(Wd)} ${f(Ht)}" width="194mm" height="${f(194 * Ht / Wd)}mm">` +
+    `<path d="${d}" fill="none" stroke="#000" stroke-width="${f(sw)}" stroke-linecap="square"/>` +
+    `<g font-family="Arial, Helvetica, sans-serif" font-weight="600" font-size="${f(w * prefs.fs)}" text-anchor="middle" dominant-baseline="central">${text}</g></svg>`;
+}
+addEventListener('beforeprint', () => { $('printout').innerHTML = buildSVG(); });
+$('print').onclick = () => window.print();
+const download = (blob, name) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); };
+$('svg').onclick = () => download(new Blob([buildSVG()], { type: 'image/svg+xml' }), 'answer-grid.svg');
+$('save').onclick = () => download(new Blob([JSON.stringify({ pattern, answers, K, reg, texts, nextId, prefs })], { type: 'application/json' }), 'answer-grid.json');
+$('load').onclick = () => $('file').click();
+$('file').onchange = async () => {
+  try { const s = JSON.parse(await $('file').files[0].text()); if (!validState(s)) throw 0; applyState(s); toast('Đã mở file dự án.'); }
+  catch { toast('File dự án không hợp lệ.', { error: true }); }
+  $('file').value = '';
+};
+$('reset').onclick = async () => {
+  if (!await ask('Xoá toàn bộ dữ liệu (hình, đáp án, vùng đã chia) và quay về hình mẫu? Không hoàn tác được.', { title: 'Xoá hết?', ok: 'Xoá hết', danger: true })) return;
+  try { localStorage.removeItem(KEY); } catch {}
+  if (painting) await setTool('select');
+  applyState(defaultState()); toast('Đã xoá, quay về hình mẫu.');
+};
+
+// Image -> grid, all on a canvas. Grayscale + Otsu threshold; the grid size comes from where brightness
+// jumps: cell boundaries (grid lines and black/white edges) repeat with the cell pitch, so the column
+// and row edge profiles are periodic and their period gives the cell count.
+async function analyzeImage(file) {
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, 2400 / Math.max(bmp.width, bmp.height)), W = Math.round(bmp.width * k), H = Math.round(bmp.height * k);
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H); ctx.drawImage(bmp, 0, 0, W, H);
+  const px = ctx.getImageData(0, 0, W, H).data, g = new Float32Array(W * H);
+  for (let i = 0; i < W * H; i++) g[i] = 0.299 * px[i * 4] + 0.587 * px[i * 4 + 1] + 0.114 * px[i * 4 + 2];
+  // Otsu: the gray level that best separates dark from light pixels (levels <= t count as dark).
+  const hist = new Float64Array(256); for (const v of g) hist[v | 0]++;
+  let sum = 0; for (let i = 0; i < 256; i++) sum += i * hist[i];
+  let wB = 0, sB = 0, best = 0, t = 128;
+  for (let i = 0; i < 256; i++) {
+    wB += hist[i]; if (!wB || wB === g.length) continue;
+    sB += i * hist[i];
+    const mB = sB / wB, mF = (sum - sB) / (g.length - wB), v = wB * (g.length - wB) * (mB - mF) ** 2;
+    if (v > best) { best = v; t = i; }
+  }
+  const ex = new Float64Array(W), ey = new Float64Array(H);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const i = y * W + x;
+    if (x) ex[x] += Math.abs(g[i] - g[i - 1]);
+    if (y) ey[y] += Math.abs(g[i] - g[i - W]);
+  }
+  return { g, W, H, t, cols: cellCount(ex), rows: cellCount(ey) };
+}
+
+// Number of cells along one axis from its edge profile e (strong values at cell boundaries).
+function cellCount(e) {
+  const L = e.length, mean = e.reduce((a, b) => a + b, 0) / L, z = Array.from(e, v => v - mean);
+  // Autocorrelation: the smallest lag scoring close to the best is the cell pitch (its multiples score high too).
+  const ac = [];
+  for (let lag = 3; lag <= L / 4; lag++) { let s = 0; for (let i = lag; i < L; i++) s += z[i] * z[i - lag]; ac[lag] = s; }
+  const top = Math.max(...ac.filter(Number.isFinite));
+  if (!(top > 0)) return 30;
+  let pitch = ac.findIndex((v, lag) => lag >= 3 && v >= 0.8 * top);
+  // Refine: the count whose evenly spaced boundaries land on the strongest edges.
+  const n0 = L / pitch; let bestN = Math.round(n0), bestS = -Infinity;
+  for (let n = Math.max(2, Math.floor(n0 * 0.9)); n <= Math.ceil(n0 * 1.1); n++) {
+    let s = 0;
+    for (let j = 1; j < n; j++) { const x = Math.round(j * L / n); s += Math.max(e[x - 1] || 0, e[x] || 0, e[x + 1] || 0); }
+    s /= n - 1;
+    if (s > bestS) { bestS = s; bestN = n; }
+  }
+  // The autocorrelation can lock onto a multiple of the real pitch (e.g. every 2nd grid line). Split the cells
+  // while the new in-between boundaries are real edges too; inside a true cell they are flat.
+  const edgeAt = (n, only) => {
+    let s = 0, c = 0;
+    for (let j = 1; j < n; j++) { if (only && !only(j)) continue; const x = Math.round(j * L / n); s += Math.max(e[x - 1] || 0, e[x] || 0, e[x + 1] || 0); c++; }
+    return c ? s / c : 0;
+  };
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const k of [2, 3]) {
+      const m = bestN * k;
+      if (L / m >= 3 && edgeAt(m, j => j % k) >= 0.5 * edgeAt(bestN)) { bestN = m; grew = true; break; }
+    }
+  }
+  return bestN;
+}
+
+// A cell is black when the middle of the cell (away from grid lines) is mostly darker than the threshold.
+function imageToPattern({ g, W, H, t }, rows, cols) {
+  const out = [];
+  for (let r = 0; r < rows; r++) {
+    let row = '';
+    for (let c = 0; c < cols; c++) {
+      const x0 = (c + 0.25) * W / cols, x1 = (c + 0.75) * W / cols, y0 = (r + 0.25) * H / rows, y1 = (r + 0.75) * H / rows;
+      let dark = 0, n = 0;
+      for (let y = Math.floor(y0); y < Math.ceil(y1); y++) for (let x = Math.floor(x0); x < Math.ceil(x1); x++) { n++; if (g[y * W + x] <= t) dark++; }
+      row += dark * 2 > n ? '#' : '.';
+    }
+    out.push(row);
+  }
+  return out;
+}
+
+// Assigns every cell to one option (question q, letter L -> index q*K+L) such that:
+//  - black cells belong exactly to the correct options, white cells to the wrong ones
+//  - every option is one connected area, and each question's K options form one connected area
+//    (diagonal neighbours count as connected)
+//  - option sizes inside a question follow random weights, so size does not give the answer away,
+//    question totals stay close to each other, and areas stay compact
+// Returns { owner: Int16Array(R*C) of option indices, wgt }, or null if this random attempt failed.
+function generateOnce(ITER = 1000000, W_PERIM = 0.12, W_TOTAL = 1.5, rnd = Math.random) {
+  const N = R * C, Q = answers.length, NO = Q * K, NW = K - 1;
+  const qOf = o => (o / K) | 0, Ls = [...Array(K).keys()];
+  const isB = i => black[(i / C) | 0][i % C];
+  // NB: 8 neighbours, used for connectivity. N4: side neighbours, used only to score compactness.
+  const NB = Array.from({ length: N }, (_, i) => nb8(i));
+  const N4 = Array.from({ length: N }, (_, i) => nb8(i).filter(y => y === i - C || y === i + C || (y - i) ** 2 === 1));
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = (rnd() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const pick = a => a[(rnd() * a.length) | 0];
+  const comps = pred => {
+    const id = new Int32Array(N).fill(-1), list = [];
+    for (let i = 0; i < N; i++) if (pred(i) && id[i] < 0) {
+      const st = [i], cs = []; id[i] = list.length;
+      while (st.length) { const x = st.pop(); cs.push(x); for (const y of NB[x]) if (pred(y) && id[y] < 0) { id[y] = list.length; st.push(y); } }
+      list.push(cs);
+    }
+    return { id, list };
+  };
+  const owner = new Int16Array(N).fill(-1);
+  const size = new Int32Array(NO);
+  const put = (i, o) => { owner[i] = o; size[o]++; };
+
+  // Grow several areas in parallel from their seeds over cells allowed by `free`, always extending the
+  // area furthest below its target; among a few random frontier cells take the one touching the area most.
+  function grow(opts, target, free) {
+    const front = new Map(opts.map(o => [o, []]));
+    const inOpts = new Set(opts);
+    for (let i = 0; i < N; i++) if (inOpts.has(owner[i])) for (const y of NB[i]) if (free(y)) front.get(owner[i]).push(y);
+    for (;;) {
+      let best = -1, br = Infinity;
+      for (const o of opts) {
+        const f = front.get(o);
+        while (f.length && !free(f[f.length - 1])) f.pop();
+        if (f.length && size[o] / target[o] < br) { br = size[o] / target[o]; best = o; }
+      }
+      if (best < 0) return;
+      const f = front.get(best);
+      let cell = -1, score = -1;
+      for (let k = 0; k < 6 && f.length; k++) {
+        const j = (rnd() * f.length) | 0, y = f[j];
+        if (!free(y)) { f[j] = f[f.length - 1]; f.pop(); continue; }
+        const s = N4[y].filter(z => owner[z] === best).length + rnd() * 0.5;
+        if (s > score) { score = s; cell = y; }
+      }
+      if (cell < 0) continue;
+      put(cell, best);
+      for (const y of NB[cell]) if (free(y)) f.push(y);
+    }
+  }
+
+  // 1. Split black components into Q connected pieces. Tiny components must stay whole (an option is connected).
+  const bc = comps(isB), totalB = bc.list.reduce((a, cs) => a + cs.length, 0);
+  if (bc.list.length > Q) return null;
+  const k = bc.list.map(cs => Math.max(1, Math.round(cs.length * Q / totalB)));
+  const sumK = () => k.reduce((a, b) => a + b, 0);
+  while (sumK() > Q) { let j = -1; k.forEach((v, i) => { if (v > 1 && (j < 0 || bc.list[i].length / (v - 1) < bc.list[j].length / (k[j] - 1))) j = i; }); k[j]--; }
+  while (sumK() < Q) { let j = 0; k.forEach((v, i) => { if (bc.list[i].length / v > bc.list[j].length / k[j]) j = i; }); k[j]++; }
+  if (bc.list.some((cs, i) => k[i] > cs.length)) return null;
+  const qs = shuffle([...Array(Q).keys()]);
+  const correct = q => q * K + LETTERS.indexOf(answers[q]);
+  bc.list.forEach((cs, ci) => {
+    // Seeds on the black/white boundary, spread out by farthest-point sampling, so every piece touches white
+    // (its question's wrong options must attach to it).
+    let edge = cs.filter(i => NB[i].some(y => !isB(y)));
+    if (edge.length < k[ci]) edge = cs;
+    const seeds = [pick(edge)];
+    const inComp = new Set(cs);
+    while (seeds.length < k[ci]) {
+      const dist = new Map(seeds.map(s => [s, 0])), q = [...seeds];
+      for (let h = 0; h < q.length; h++) for (const y of NB[q[h]]) if (inComp.has(y) && !dist.has(y)) { dist.set(y, dist.get(q[h]) + 1); q.push(y); }
+      const cand = edge.filter(i => !seeds.includes(i)).sort((a, b) => dist.get(b) - dist.get(a));
+      seeds.push(pick(cand.slice(0, Math.max(1, Math.ceil(cand.length * 0.05)))));
+    }
+    const opts = seeds.map(s => { const q = qs.pop(); put(s, correct(q)); return correct(q); });
+    const target = {}; opts.forEach(o => target[o] = cs.length / k[ci]);
+    grow(opts, target, y => isB(y) && owner[y] < 0 && inComp.has(y));
+  });
+  if (owner.some((o, i) => isB(i) && o < 0)) return null;
+
+  // 2. Seed K-1 wrong options per question in white cells next to its black piece. Every white component
+  //    needs at least one seed, otherwise its cells could never be reached.
+  const wrong = q => Ls.filter(L => L !== LETTERS.indexOf(answers[q])).map(L => q * K + L);
+  const nSeed = new Int32Array(Q);
+  const seedAt = (i, q) => { put(i, wrong(q)[nSeed[q]++]); };
+  const wcomps = shuffle(comps(i => !isB(i)).list);
+  for (const cs of wcomps) {
+    const opts = [];
+    for (const i of cs) for (const y of NB[i]) if (isB(y)) { const q = qOf(owner[y]); if (nSeed[q] < NW) opts.push([i, q]); }
+    if (!opts.length) return null;
+    const minSeed = Math.min(...opts.map(([, q]) => nSeed[q]));
+    const [i, q] = pick(opts.filter(([, q]) => nSeed[q] === minSeed));
+    seedAt(i, q);
+  }
+  for (const q of shuffle([...Array(Q).keys()])) while (nSeed[q] < NW) {
+    let cand = [];
+    for (let i = 0; i < N; i++) if (!isB(i) && owner[i] < 0 && NB[i].some(y => owner[y] === correct(q))) cand.push(i);
+    if (!cand.length) for (let i = 0; i < N; i++) if (!isB(i) && owner[i] < 0 && NB[i].some(y => owner[y] >= 0 && qOf(owner[y]) === q)) cand.push(i);
+    if (!cand.length) return null;
+    seedAt(pick(cand), q);
+  }
+  const totalW = N - totalB, target = {}, wopts = [];
+  // Random size weight per option (correct one included), e.g. 0.55–1.45: sizes vary by luck, not by role.
+  const wgt = Float64Array.from({ length: NO }, () => 0.55 + 0.9 * rnd());
+  for (let q = 0; q < Q; q++) for (const o of wrong(q)) { wopts.push(o); target[o] = Math.max(1, size[correct(q)] * wgt[o] / wgt[correct(q)] * totalW / totalB / NW); }
+  grow(wopts, target, y => !isB(y) && owner[y] < 0);
+  if (owner.some(o => o < 0)) return null;
+
+  // 3. Simulated annealing: move a border cell to a same-colour neighbouring option while keeping
+  //    every option and question connected. Cost = squared distance of each option from its weighted share
+  //    of the question, relative to the question size (so small questions count as much as big ones)
+  //    + pull of each question's total towards the average + perimeter (compactness).
+  const avgQ = N / Q;
+  const qSizes = q => Ls.map(L => size[q * K + L]);
+  const tgt = (q, tot) => { const w = Ls.map(L => wgt[q * K + L]), sw = w.reduce((a, b) => a + b); return w.map(x => tot * x / sw); };
+  const qCost = q => {
+    const s = qSizes(q), tot = s.reduce((a, b) => a + b), t = tgt(q, tot);
+    return s.reduce((a, x, L) => a + (x - t[L]) ** 2, 0) / (tot / K) + W_TOTAL * (tot - avgQ) ** 2 / avgQ;
+  };
+  const connectedWithout = (i, same) => {
+    const nbs = NB[i].filter(same);
+    if (nbs.length <= 1) return true;
+    const seen = new Set([i, nbs[0]]), st = [nbs[0]];
+    let left = nbs.length - 1;
+    while (st.length && left) { const x = st.pop(); for (const y of NB[x]) if (!seen.has(y) && same(y)) { seen.add(y); st.push(y); if (nbs.includes(y)) left--; } }
+    return left === 0;
+  };
+  const cellsOf = Array.from({ length: NO }, () => new Set());
+  owner.forEach((o, i) => cellsOf[o].add(i));
+  const W_CROSS = 1.5;
+  const crossAt = tl => owner[tl] !== owner[tl + 1] && owner[tl] === owner[tl + C + 1] && owner[tl + 1] === owner[tl + C];
+  const crossAround = i => {
+    const r = (i / C) | 0, c = i % C; let n = 0;
+    for (const [dr, dc] of [[0, 0], [0, -1], [-1, 0], [-1, -1]]) {
+      const rr = r + dr, cc = c + dc;
+      if (rr >= 0 && cc >= 0 && rr < R - 1 && cc < C - 1 && crossAt(rr * C + cc)) n++;
+    }
+    return n;
+  };
+  const anyOf = set => { let n = (rnd() * set.size) | 0; for (const x of set) if (n-- === 0) return x; };
+  for (let it = 0; it < ITER; it++) {
+    const T = 20 * Math.pow(0.0005, it / ITER);
+    let i, Y;
+    const mode = rnd();
+    if (mode < 0.7) {
+      // Targeted: grow the option furthest below its target or shrink the one furthest above.
+      const q = (rnd() * Q) | 0, s = qSizes(q), t = tgt(q, s.reduce((a, b) => a + b));
+      const os = [...Ls].sort((a, b) => (s[a] - t[a]) - (s[b] - t[b])).map(L => q * K + L);
+      if (mode < 0.35) { const j = anyOf(cellsOf[os[0]]); i = pick(NB[j]); Y = os[0]; }
+      else { i = anyOf(cellsOf[os[K - 1]]); Y = owner[pick(NB[i])]; }
+    } else { i = (rnd() * N) | 0; Y = owner[pick(NB[i])]; }
+    const X = owner[i];
+    if (X === Y || isB(i) !== (LETTERS[Y % K] === answers[qOf(Y)]) || size[X] <= 1) continue;
+    if (!NB[i].some(y => owner[y] === Y)) continue;
+    const qx = qOf(X), qy = qOf(Y);
+    const before = qCost(qx) + (qx !== qy ? qCost(qy) : 0);
+    size[X]--; size[Y]++;
+    const after = qCost(qx) + (qx !== qy ? qCost(qy) : 0);
+    size[X]++; size[Y]--;
+    let dPer = 0; for (const y of N4[i]) dPer += (owner[y] !== Y) - (owner[y] !== X);
+    // Diagonal-only crossings (2×2 checkerboards) are allowed but awkward to colour; penalise them.
+    let dCross = -crossAround(i);
+    owner[i] = Y; dCross += crossAround(i); owner[i] = X;
+    const d = after - before + W_PERIM * dPer + W_CROSS * dCross;
+    if (d > 0 && rnd() >= Math.exp(-d / T)) continue;
+    if (!connectedWithout(i, y => owner[y] === X)) continue;
+    if (qx !== qy && !connectedWithout(i, y => owner[y] >= 0 && qOf(owner[y]) === qx)) continue;
+    owner[i] = Y; size[X]--; size[Y]++; cellsOf[X].delete(i); cellsOf[Y].add(i);
+  }
+
+  // 4. Untangle 2×2 "checkerboards" where two same-colour options cross only diagonally: swapping two
+  //    cells makes both side-connected (much easier to colour in) without changing any option's size.
+  const connectedSet = cs => {
+    const seen = new Set([cs[0]]), st = [cs[0]], all = new Set(cs);
+    while (st.length) for (const y of NB[st.pop()]) if (all.has(y) && !seen.has(y)) { seen.add(y); st.push(y); }
+    return seen.size === cs.length;
+  };
+  const qCells = q => { const out = []; for (let i = 0; i < N; i++) if (qOf(owner[i]) === q) out.push(i); return out; };
+  const swap = (p, q) => {
+    const a = owner[p], b = owner[q];
+    cellsOf[a].delete(p); cellsOf[b].delete(q); owner[p] = b; owner[q] = a; cellsOf[b].add(p); cellsOf[a].add(q);
+  };
+  for (let pass = 0, changed = true; changed && pass < 5; pass++) {
+    changed = false;
+    for (let r = 0; r < R - 1; r++) for (let c = 0; c < C - 1; c++) {
+      const tl = r * C + c, tr = tl + 1, bl = tl + C, br = bl + 1, X = owner[tl], Y = owner[tr];
+      if (X === Y || owner[br] !== X || owner[bl] !== Y || isB(tl) !== isB(tr)) continue;
+      // Any of the 4 swaps makes both pairs side-by-side; try each until connectivity survives.
+      for (const [p, other] of [[tl, tr], [tl, bl], [br, tr], [br, bl]]) {
+        swap(p, other);
+        if (connectedSet([...cellsOf[X]]) && connectedSet([...cellsOf[Y]]) &&
+            connectedSet(qCells(qOf(X))) && (qOf(X) === qOf(Y) || connectedSet(qCells(qOf(Y))))) { changed = true; break; }
+        swap(p, other);
+      }
+    }
+  }
+  return { owner, wgt };
+}
+
+// Up-front checks with a readable reason, so a doomed run does not just say "failed".
+function whyImpossible() {
+  const Q = answers.length, N = R * C, B = black.flat().filter(Boolean).length, W = N - B;
+  if (!B) return 'Hình chưa có ô đen nào.';
+  if (B < Q) return `Chỉ có ${B} ô đen cho ${Q} câu (mỗi câu cần ít nhất 1 ô đen). Giảm số câu hoặc tô thêm.`;
+  if (W < (K - 1) * Q) return `Chỉ có ${W} ô trắng cho ${(K - 1) * Q} lựa chọn sai. Thêm viền trắng hoặc giảm số câu / số lựa chọn.`;
+  const seen = new Uint8Array(N); let comps = 0;
+  for (let i = 0; i < N; i++) if (black[(i / C) | 0][i % C] && !seen[i]) {
+    comps++; const st = [i]; seen[i] = 1;
+    while (st.length) for (const y of nb8(st.pop())) if (!seen[y] && black[(y / C) | 0][y % C]) { seen[y] = 1; st.push(y); }
+  }
+  if (comps > Q) return `Hình có ${comps} cụm ô đen rời nhau nhưng chỉ có ${Q} câu (mỗi cụm phải thuộc đáp án đúng của một câu). Tăng số câu hoặc nối các cụm lại.`;
+  return null;
+}
+
+// Each attempt is random and quality varies a lot, so keep the most balanced of several valid ones.
+function generate(tries = 5) {
+  let best = null, bestScore = Infinity;
+  for (let t = 0; t < tries * 3 && t < tries + 20; t++) {
+    const res = generateOnce();
+    if (!res || !validate(res.owner).ok) continue;
+    const o = res.owner, sc = score(res);
+    if (sc < bestScore) { best = o; bestScore = sc; }
+    if (t >= tries - 1 && best) break;
+  }
+  return best;
+}
+
+// Lower is better: how far options miss their weighted share, how uneven question totals are, tiny options,
+// options broken into diagonal-only pieces, and same-colour diagonal crossings.
+function score({ owner, wgt }) {
+  const Q = answers.length, size = new Array(Q * K).fill(0), avgQ = R * C / Q;
+  owner.forEach(o => size[o]++);
+  let sc = 0;
+  for (let q = 0; q < Q; q++) {
+    const s = size.slice(q * K, q * K + K), w = wgt.slice(q * K, q * K + K), tot = s.reduce((a, b) => a + b), sw = w.reduce((a, b) => a + b);
+    sc += s.reduce((a, x, L) => a + Math.abs(x - tot * w[L] / sw), 0) / tot + Math.abs(tot - avgQ) / avgQ;
+    sc += s.filter(x => x < 5).length; // near-empty options look like mistakes on paper
+  }
+  sc += 0.15 * (pieces4(i => owner[i]).length - Q * K);
+  for (let r = 0; r < R - 1; r++) for (let c = 0; c < C - 1; c++) {
+    const a = r * C + c;
+    if (owner[a] !== owner[a + 1] && owner[a] === owner[a + C + 1] && owner[a + 1] === owner[a + C] && black[r][c] === black[r][c + 1]) sc += 0.5;
+  }
+  return sc;
+}
+
+// Side-connected (4-neighbour) pieces of equal-valued cells; get(i) gives cell i's region/option.
+function pieces4(get) {
+  const seen = new Uint8Array(R * C), out = [];
+  for (let i = 0; i < R * C; i++) if (!seen[i]) {
+    const pc = [i], v = get(i); seen[i] = 1;
+    for (let h = 0; h < pc.length; h++) {
+      const x = pc[h], r = (x / C) | 0, c = x % C;
+      for (const y of [r > 0 ? x - C : -1, r < R - 1 ? x + C : -1, c > 0 ? x - 1 : -1, c < C - 1 ? x + 1 : -1])
+        if (y >= 0 && !seen[y] && get(y) === v) { seen[y] = 1; pc.push(y); }
+    }
+    out.push(pc);
+  }
+  return out;
+}
+
+function nb8(i) {
+  const r = (i / C) | 0, c = i % C, o = [];
+  for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+    const rr = r + dr, cc = c + dc;
+    if ((dr || dc) && rr >= 0 && rr < R && cc >= 0 && cc < C) o.push(rr * C + cc);
+  }
+  return o;
+}
+
+// Independent check of the hard rules, used before accepting a result.
+function validate(owner) {
+  const N = R * C, NO = answers.length * K, errs = [];
+  const connected = pred => { const cs = []; for (let i = 0; i < N; i++) if (pred(i)) cs.push(i); if (!cs.length) return false;
+    const seen = new Set([cs[0]]), st = [cs[0]]; while (st.length) for (const y of nb8(st.pop())) if (!seen.has(y) && pred(y)) { seen.add(y); st.push(y); } return seen.size === cs.length; };
+  for (let i = 0; i < N; i++) {
+    const o = owner[i], isCorrect = o >= 0 && LETTERS[o % K] === answers[(o / K) | 0];
+    if (black[(i / C) | 0][i % C] !== isCorrect) { errs.push('colour ' + i); break; }
+  }
+  for (let o = 0; o < NO; o++) if (!connected(i => owner[i] === o)) errs.push('option ' + (((o / K) | 0) + 1) + LETTERS[o % K]);
+  for (let q = 0; q < answers.length; q++) if (!connected(i => ((owner[i] / K) | 0) === q)) errs.push('question ' + (q + 1));
+  return { ok: !errs.length, errs };
+}
+
+// Start: saved state, else the previous version's saved regions on the example picture, else the example.
+(() => {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(KEY)); } catch {}
+  if (!validState(s)) {
+    s = defaultState();
+    try { const old = JSON.parse(localStorage.getItem(OLD_KEY)); if (old?.reg) Object.assign(s, { reg: old.reg, texts: old.texts, nextId: old.nextId }); } catch {}
+  }
+  applyState(s);
+})();
+</script>
+</body>
+</html>

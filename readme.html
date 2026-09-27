@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hướng dẫn Tô Hình Đáp Án</title>
+<style>
+  :root { --bg: #f3f4f7; --panel: #fff; --line: #e3e6ec; --text: #1a1d23; --muted: #667085; --accent: #2f5bea; --accent-weak: #eaf0ff;
+          --accent-ink: #1d3fb8; --mark: #ff2d55; --warn-bg: #fff7e6; --warn-line: #f5d38a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  a { color: var(--accent-ink); }
+  header.top { background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+  header.top .in { max-width: 1040px; margin: auto; padding: 12px 20px; display: flex; align-items: center; gap: 12px; }
+  .logo { width: 26px; height: 26px; border-radius: 7px; background: var(--text);
+          background-image: linear-gradient(90deg, transparent 50%, #fff 50%), linear-gradient(transparent 50%, #fff 50%);
+          background-size: 13px 13px; background-blend-mode: difference; }
+  header.top b { font-size: 15px; }
+  header.top .sp { flex: 1; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 8px; background: var(--accent); color: #fff;
+         text-decoration: none; font-weight: 600; font-size: 14px; }
+  .btn.ghost { background: transparent; color: var(--text); border: 1px solid #cfd4dc; font-weight: 500; }
+  main { max-width: 1040px; margin: auto; padding: 28px 20px 80px; }
+  h1 { font-size: 30px; line-height: 1.25; margin: 0 0 8px; }
+  .lead { color: var(--muted); margin: 0 0 24px; font-size: 17px; }
+  .toc { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 28px; }
+  .toc h4 { margin: 0 0 4px; font-size: 15px; }
+  .toc h4 a { color: var(--text); text-decoration: none; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .part { margin-top: 44px; }
+  .part > h2 { font-size: 24px; margin: 0 0 6px; display: flex; gap: 10px; align-items: center; }
+  .part > h2 .tag { font-size: 12px; font-weight: 700; letter-spacing: .06em; background: var(--text); color: #fff; padding: 3px 9px; border-radius: 99px; }
+  .step { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; margin-top: 16px; }
+  .step h3 { margin: 0 0 8px; font-size: 18px; display: flex; gap: 10px; align-items: baseline; }
+  .step h3 .n { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-weak); color: var(--accent-ink);
+                display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+  .step p { margin: 6px 0; }
+  .step ul, .step ol { margin: 6px 0; padding-left: 22px; }
+  .step li { margin: 3px 0; }
+  figure { margin: 14px 0 4px; }
+  figure img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--line); background: #fff; }
+  figure a { display: block; }
+  figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .m { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px;
+       background: var(--mark); color: #fff; font-size: 12px; font-weight: 700; vertical-align: 2px; }
+  kbd, .ui { font: 600 14px system-ui; background: #f0f2f5; border: 1px solid #d7dbe2; border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; white-space: nowrap; }
+  .settings { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 15px; }
+  .settings th, .settings td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .settings th { color: var(--muted); font-weight: 600; font-size: 13px; }
+  .compare { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+  .compare figure { margin: 0; }
+  .tip { background: var(--accent-weak); border: 1px solid #cddcff; border-radius: 10px; padding: 10px 14px; margin-top: 12px; font-size: 15px; }
+  .warn { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 10px; padding: 10px 14px; margin-top: 12px; font-size: 15px; }
+  .faq dt { font-weight: 700; margin-top: 14px; }
+  .faq dd { margin: 4px 0 0; }
+  @media (max-width: 720px) { .toc { grid-template-columns: 1fr; } .compare { grid-template-columns: 1fr; } h1 { font-size: 24px; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <div class="logo" aria-hidden="true"></div><b>Tô Hình Đáp Án — Hướng dẫn</b><span class="sp"></span>
+  <a class="btn" href="index.html">Mở tool</a>
+</div></header>
+
+<main>
+  <h1>Hướng dẫn tạo trò chơi tô hình bằng đáp án trắc nghiệm</h1>
+  <p class="lead">Người chơi trả lời các câu trắc nghiệm, rồi tô đen những ô ghi đáp án đúng. Tô xong sẽ hiện ra bức hình.
+    Làm theo 2 phần: <b>A.</b> biến một ảnh bất kỳ thành ảnh lưới ô đen/trắng, <b>B.</b> dùng tool để gắn đáp án vào từng ô rồi in ra.</p>
+
+  <nav class="toc">
+    <div><h4><a href="#tao-anh">Phần A — Tạo ảnh lưới từ ảnh bất kỳ</a></h4>
+      <ol><li><a href="#tao-anh">Mở ascii-magic</a></li><li><a href="#a-upload">Tải ảnh lên</a></li><li><a href="#a-style">Chọn Pixel Art &amp; cài đặt</a></li>
+          <li><a href="#a-size">Canh Pixel Size &amp; Coverage</a></li><li><a href="#a-export">Export ảnh</a></li></ol></div>
+    <div><h4><a href="#dung-tool">Phần B — Dùng tool Tô Hình Đáp Án</a></h4>
+      <ol><li><a href="#b-image">Mở ảnh lưới &amp; thêm viền</a></li><li><a href="#b-answers">Nhập đáp án &amp; chia vùng</a></li>
+          <li><a href="#b-print">Xem trước &amp; in PDF</a></li><li><a href="#faq">Mẹo &amp; câu hỏi thường gặp</a></li></ol></div>
+  </nav>
+
+  <!-- ===================== PART A ===================== -->
+  <section class="part" id="tao-anh">
+    <h2><span class="tag">PHẦN A</span> Tạo ảnh lưới từ ảnh bất kỳ</h2>
+    <p>Dùng trang miễn phí <a href="https://www.ascii-magic.com/app" target="_blank" rel="noopener"><b>ascii-magic.com</b></a> để biến ảnh thành lưới ô vuông đen/trắng.
+      Không cần đăng ký. Nên chọn ảnh <b>nét rõ, ít chi tiết</b> (hình vẽ, logo, bóng đen…), vì mỗi ô chỉ có thể đen hoặc trắng.</p>
+
+    <div class="step">
+      <h3><span class="n">1</span>Mở trang và đóng popup giới thiệu</h3>
+      <p>Vào <a href="https://www.ascii-magic.com/app" target="_blank" rel="noopener">https://www.ascii-magic.com/app</a>. Lần đầu mở sẽ có popup giới thiệu — bấm nút <b>✕</b> <span class="m">1</span> để đóng.</p>
+      <figure><a href="guide/am-0-welcome.jpg" target="_blank"><img src="guide/am-0-welcome.jpg" alt="Popup giới thiệu của ascii-magic, nút X được đánh dấu" loading="lazy"></a></figure>
+    </div>
+
+    <div class="step" id="a-upload">
+      <h3><span class="n">2</span>Tải ảnh của bạn lên</h3>
+      <p>Bấm <span class="ui">Upload</span> <span class="m">2</span> ở thanh dưới cùng rồi chọn ảnh trong máy.</p>
+      <figure><a href="guide/am-1-upload.jpg" target="_blank"><img src="guide/am-1-upload.jpg" alt="Nút Upload ở thanh công cụ dưới" loading="lazy"></a></figure>
+    </div>
+
+    <div class="step" id="a-style">
+      <h3><span class="n">3</span>Chọn kiểu <b>Pixel Art</b></h3>
+      <p>Ở góc trên bên phải, mục <b>CHARACTERS</b>, mở menu thả xuống <span class="m">3</span> và chọn <span class="ui">Pixel Art</span>.</p>
+      <figure><a href="guide/am-2-pixelart.jpg" target="_blank"><img src="guide/am-2-pixelart.jpg" alt="Menu CHARACTERS chọn Pixel Art" loading="lazy"></a></figure>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">4</span>Cài đặt để ra ảnh chỉ có đen và trắng</h3>
+      <table class="settings">
+        <tr><th></th><th>Mục</th><th>Giá trị</th><th>Tác dụng</th></tr>
+        <tr><td><span class="m">4</span></td><td>Backdrop → <b>Mode</b></td><td><span class="ui">Solid Black</span></td><td>Nền đen trơn, không lẫn ảnh gốc mờ phía sau</td></tr>
+        <tr><td><span class="m">5</span></td><td><b>Char Opacity</b></td><td><b>100%</b></td><td>Ô rõ nét, không trong suốt</td></tr>
+        <tr><td><span class="m">6</span></td><td>Intensity → <b>Brightness</b></td><td><b>100</b> (kéo hết sang phải)</td><td>Phần sáng thành ô trắng hẳn</td></tr>
+      </table>
+      <figure><a href="guide/am-3-settings.jpg" target="_blank"><img src="guide/am-3-settings.jpg" alt="Các mục Mode, Char Opacity, Brightness được đánh dấu" loading="lazy"></a></figure>
+    </div>
+
+    <div class="step" id="a-size">
+      <h3><span class="n">5</span>Canh <b>Pixel Size</b> và <b>Coverage</b> cho vừa ý</h3>
+      <ul>
+        <li><b>Pixel Size</b> <span class="m">7</span> — độ to của ô. Số càng lớn thì ô càng to, <b>số ô càng ít</b> (hình thô hơn nhưng dễ tô hơn).
+          Số càng nhỏ thì hình càng chi tiết nhưng có rất nhiều ô.</li>
+        <li><b>Coverage</b> <span class="m">8</span> — quyết định bao nhiêu phần của ảnh thành <b>ô đen</b>. Kéo <b>thấp</b> xuống thì nét đen dày ra, các vùng xám chuyển thành đen;
+          kéo <b>cao</b> thì chỉ phần thật tối mới đen.</li>
+      </ul>
+      <figure><a href="guide/am-4-size-coverage.jpg" target="_blank"><img src="guide/am-4-size-coverage.jpg" alt="Thanh Pixel Size và Coverage" loading="lazy"></a></figure>
+      <div class="compare">
+        <figure><a href="guide/am-cmp-8-100.jpg" target="_blank"><img src="guide/am-cmp-8-100.jpg" alt="Pixel Size 8, Coverage 100%" loading="lazy"></a>
+          <figcaption>Pixel Size 8, Coverage 100% — ô quá nhỏ, quá nhiều ô.</figcaption></figure>
+        <figure><a href="guide/am-cmp-22-100.jpg" target="_blank"><img src="guide/am-cmp-22-100.jpg" alt="Pixel Size 22, Coverage 100%" loading="lazy"></a>
+          <figcaption>Pixel Size 22, Coverage 100% — ô vừa, nhưng nét đen hơi mảnh.</figcaption></figure>
+        <figure><a href="guide/am-cmp-22-50.jpg" target="_blank"><img src="guide/am-cmp-22-50.jpg" alt="Pixel Size 22, Coverage 50%" loading="lazy"></a>
+          <figcaption>Pixel Size 22, Coverage 50% — nét đen dày, rõ hình. ✔</figcaption></figure>
+      </div>
+      <div class="tip"><b>Nên nhắm khoảng 30–70 ô mỗi chiều.</b> Sau khi mở ảnh trong tool (phần B), tool sẽ báo số hàng × số cột. Nếu quá nhiều ô thì quay lại đây tăng Pixel Size rồi export lại.</div>
+      <div class="tip">Nếu hình bị ngược màu (chủ thể trắng trên nền đen trong khi bạn muốn chủ thể đen), bật <b>Invert Mapping</b> ngay dưới Char Opacity.</div>
+    </div>
+
+    <div class="step" id="a-export">
+      <h3><span class="n">6</span>Export ảnh về máy</h3>
+      <p>Bấm <span class="ui">Export</span> ở thanh dưới cùng. Trong bảng hiện ra, chọn định dạng <span class="ui">PNG</span> <span class="m">9</span>,
+        giữ độ phân giải <b>2×</b> rồi bấm <span class="ui">Export PNG</span> <span class="m">10</span>. File PNG sẽ được tải về thư mục Downloads.</p>
+      <figure><a href="guide/am-5-export.jpg" target="_blank"><img src="guide/am-5-export.jpg" alt="Bảng Export với PNG và nút Export PNG" loading="lazy"></a></figure>
+    </div>
+  </section>
+
+  <!-- ===================== PART B ===================== -->
+  <section class="part" id="dung-tool">
+    <h2><span class="tag">PHẦN B</span> Dùng tool Tô Hình Đáp Án</h2>
+    <p>Mở file <a href="index.html"><b>index.html</b></a> bằng <b>Chrome</b> hoặc <b>Safari</b> (bấm đúp vào file). Mọi thứ bạn làm được tự lưu trong trình duyệt —
+      đóng mở lại vẫn còn. Không cần mạng.</p>
+
+    <div class="step">
+      <h3><span class="n">0</span>Làm quen với màn hình</h3>
+      <p>Cột bên trái là <b>4 bước làm theo thứ tự</b> <span class="m">1</span>–<span class="m">4</span>. Phía trên có nút gạt <b>Chỉnh sửa / Xem trước</b> <span class="m">5</span>
+        và nút <b>In / PDF</b> <span class="m">6</span>. Nút <b>Hướng dẫn</b> <span class="m">i</span> bật/tắt thẻ hướng dẫn nhanh ở đầu cột trái.</p>
+      <figure><a href="guide/t1-overview.jpg" target="_blank"><img src="guide/t1-overview.jpg" alt="Tổng quan giao diện tool" loading="lazy"></a></figure>
+    </div>
+
+    <div class="step" id="b-image">
+      <h3><span class="n">1</span>Mở ảnh lưới vừa export</h3>
+      <p>Bấm <span class="ui">Mở ảnh…</span> <span class="m">1</span> và chọn file PNG tải từ ascii-magic.</p>
+      <figure><a href="guide/t2-open-image.jpg" target="_blank"><img src="guide/t2-open-image.jpg" alt="Nút Mở ảnh" loading="lazy"></a></figure>
+      <p>Tool tự nhận số hàng/cột và ô nào đen. Trong popup:</p>
+      <ol>
+        <li><span class="m">1</span> Kiểm tra <b>Số hàng / Số cột</b>. Nếu lưới xem trước lệch so với ảnh, sửa lại cho đúng. Kéo <b>Độ đậm</b> nếu nhiều ô bị nhận sai màu.</li>
+        <li><span class="m">2</span> Xem trước lưới sẽ dùng.</li>
+        <li><span class="m">3</span> Bấm <span class="ui">Dùng lưới này</span>.</li>
+      </ol>
+      <figure><a href="guide/t3-image-dialog.jpg" target="_blank"><img src="guide/t3-image-dialog.jpg" alt="Popup chuyển ảnh thành lưới" loading="lazy"></a></figure>
+      <div class="tip">Ô nào còn sai: chọn công cụ <span class="ui">Tô ô</span> trên thanh công cụ (phím <kbd>B</kbd>), rồi bấm hoặc kéo trên lưới để đổi đen ↔ trắng. Chưa có ảnh thì bấm <span class="ui">Lưới trống…</span> để tự vẽ.</div>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">2</span>Thêm viền trắng để các đáp án to ngang nhau</h3>
+      <p>Mỗi câu có 1 đáp án đúng (ô đen) và các đáp án sai (ô trắng). Để người chơi không đoán được đáp án qua kích thước vùng, số ô trắng nên gấp khoảng
+        <b>(số lựa chọn − 1)</b> lần số ô đen — với 4 lựa chọn là gấp 3. Thẻ <b>Hình</b> sẽ báo nếu đang thiếu hoặc dư ô trắng.</p>
+      <ol>
+        <li><span class="m">1</span> Bấm <span class="ui">Thêm viền trắng…</span></li>
+        <li><span class="m">2</span> Bấm <span class="ui">Gợi ý tự động</span> — tool tự tính số hàng/cột viền cần thêm (trên, trái, phải).</li>
+        <li><span class="m">3</span> Bấm <span class="ui">Thêm viền</span>.</li>
+      </ol>
+      <figure><a href="guide/t4-margin.jpg" target="_blank"><img src="guide/t4-margin.jpg" alt="Popup thêm viền trắng với nút Gợi ý tự động" loading="lazy"></a></figure>
+    </div>
+
+    <div class="step" id="b-answers">
+      <h3><span class="n">3</span>Nhập câu hỏi và đáp án đúng</h3>
+      <p>Bấm <span class="ui">Nhập đáp án…</span> ở thẻ <b>Câu hỏi &amp; đáp án</b>:</p>
+      <ol>
+        <li><span class="m">1</span> <b>Số câu</b> hỏi.</li>
+        <li><span class="m">2</span> <b>Số lựa chọn</b> mỗi câu (2–6, ví dụ A–D là 4).</li>
+        <li><span class="m">3</span> <b>Dán nhanh</b>: gõ cả dãy đáp án như <code>BAADADAC…</code> hoặc <code>1B 2A 3C</code> rồi bấm <span class="ui">Áp dụng</span>.</li>
+        <li><span class="m">4</span> Hoặc bấm chọn đáp án đúng cho từng câu.</li>
+      </ol>
+      <figure><a href="guide/t5-answers.jpg" target="_blank"><img src="guide/t5-answers.jpg" alt="Popup nhập đáp án" loading="lazy"></a></figure>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">4</span>Random chia vùng</h3>
+      <p>Bấm <span class="ui">Random chia vùng</span> <span class="m">1</span>. Sau vài giây, mỗi ô sẽ được ghi một lựa chọn (ví dụ <b>12</b> trên <b>B</b> = câu 12, đáp án B).
+        Các ô cùng một lựa chọn luôn nằm liền nhau. Chưa ưng thì bấm lại để ra phương án khác.</p>
+      <ul>
+        <li><span class="m">2</span> <span class="ui">Xem số ô từng lựa chọn</span> — bảng thống kê, đáp án đúng tô đen.</li>
+        <li><span class="m">3</span> <span class="m">4</span> Chỉnh tay (không bắt buộc): chọn vùng bằng cách kéo chuột hoặc giữ <kbd>Shift</kbd> rồi bấm, sau đó <span class="ui">Merge</span> (phím <kbd>M</kbd>) để gộp,
+          <span class="ui">Tách vùng</span> để tách. Bấm đúp vào một vùng để sửa chữ.</li>
+      </ul>
+      <figure><a href="guide/t6-random.jpg" target="_blank"><img src="guide/t6-random.jpg" alt="Lưới sau khi random chia vùng" loading="lazy"></a></figure>
+    </div>
+
+    <div class="step" id="b-print">
+      <h3><span class="n">5</span>Xem trước và in ra giấy</h3>
+      <ol>
+        <li><span class="m">1</span> Gạt sang <b>Xem trước</b> để thấy đúng bản sẽ in (không tô đen).</li>
+        <li><span class="m">2</span> Chọn <b>kiểu viền</b>: <b>Viền từng ô</b> (bảng kẻ ô, mỗi ô có chữ) hoặc <b>Viền theo vùng</b> (chỉ viền quanh mỗi đáp án, chữ ghi một lần).</li>
+        <li><span class="m">3</span> <b>Khung hình</b>: giữ hình vuông, ô vuông, hoặc đúng tỉ lệ ảnh gốc (tự chọn khi mở ảnh).</li>
+        <li><span class="m">4</span> Bấm <span class="ui">In / PDF</span>. Muốn file PDF thì chọn <b>Save as PDF / Lưu dưới dạng PDF</b> trong hộp thoại in.</li>
+      </ol>
+      <figure><a href="guide/t7-preview.jpg" target="_blank"><img src="guide/t7-preview.jpg" alt="Chế độ xem trước với viền theo vùng" loading="lazy"></a>
+        <figcaption>Viền theo vùng.</figcaption></figure>
+      <figure><a href="guide/t7b-preview-cells.jpg" target="_blank"><img src="guide/t7b-preview-cells.jpg" alt="Chế độ xem trước với viền từng ô" loading="lazy"></a>
+        <figcaption>Viền từng ô.</figcaption></figure>
+      <div class="tip">Bản in là hình vector nên in khổ lớn vẫn sắc nét, vừa khít bề ngang tờ A4 dọc, không có ngày giờ hay tiêu đề trang. Trong hộp thoại in để tỉ lệ <b>100%</b>;
+        nếu vẫn thấy dòng ngày giờ ở mép giấy, tắt mục <b>Headers and footers / Đầu trang và chân trang</b>.</div>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">6</span>Lưu, mở lại và làm hình mới</h3>
+      <p>Menu <b>⋯</b> ở góc trên bên phải:</p>
+      <ul>
+        <li><span class="m">1</span> <b>Lưu file dự án</b> (.json) — để gửi cho người khác hoặc dùng trên máy khác.</li>
+        <li><span class="m">2</span> <b>Mở file dự án…</b> — mở lại file .json đã lưu.</li>
+        <li><span class="m">3</span> <b>Xoá hết, bắt đầu lại</b> — xoá toàn bộ dữ liệu đã tự lưu, quay về hình mẫu. Không hoàn tác được.</li>
+      </ul>
+      <p>Menu này còn có <b>Tải ảnh vector (SVG)</b> để gửi tiệm in hoặc chỉnh trong Illustrator/Inkscape.</p>
+      <figure><a href="guide/t8-menu.jpg" target="_blank"><img src="guide/t8-menu.jpg" alt="Menu lưu, mở, xoá" loading="lazy"></a></figure>
+    </div>
+  </section>
+
+  <section class="part" id="faq">
+    <h2>Mẹo &amp; câu hỏi thường gặp</h2>
+    <div class="step faq"><dl>
+      <dt>Bấm "Mở ảnh…" không có gì xảy ra?</dt>
+      <dd>Hãy mở file bằng Chrome hoặc Safari (bấm đúp vào file trong Finder). Khung xem trước bên trong một số app không cho chọn file.</dd>
+      <dt>Tool báo "Hình có N cụm ô đen rời nhau nhưng chỉ có M câu"?</dt>
+      <dd>Mỗi cụm ô đen rời phải thuộc đáp án đúng của một câu. Hãy tăng số câu, hoặc dùng <b>Tô ô</b> nối các cụm nhỏ lại / xoá các chấm đen lẻ.</dd>
+      <dt>Đổi đáp án sau khi đã chia vùng?</dt>
+      <dd>Được, nhưng phải bấm <b>Random chia vùng</b> lại để ô đen khớp với đáp án mới.</dd>
+      <dt>Có vài lựa chọn chỉ 1–3 ô?</dt>
+      <dd>Thường do các chấm đen rất nhỏ trong hình. Bấm Random lại, hoặc xoá bớt chấm lẻ bằng Tô ô.</dd>
+      <dt>Dữ liệu lưu ở đâu?</dt>
+      <dd>Trong chính trình duyệt trên máy bạn. Đổi máy hoặc trình duyệt thì dùng <b>Lưu file dự án</b> / <b>Mở file dự án…</b>.</dd>
+    </dl></div>
+  </section>
+</main>
+</body>
+</html>
